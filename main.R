@@ -33,16 +33,16 @@ setdiff(food_consumption$country, pop_data$country)
 dat <- food_consumption %>%
     left_join(pop_data) %>%
     mutate(emissions_pop = co2_emmission * population) %>% 
-    as_tibble()
-
-emissions_summary <- dat %>%
-    count(country, wt = emissions_pop, name = "emissions") %>%
+    as_tibble() %>%
     mutate(country = recode(country, 
                             `Czech Republic` = "Czech Rep.", 
                             `French Polynesia` = "Fr. Polynesia", 
                             `Hong Kong SAR, China` = "Hong Kong", 
                             `Bosnia and Herzegovina` = "Bosnia and Herz.", 
                             `Korea, Rep.` = "Korea"))
+
+emissions_summary <- dat %>%
+    count(country, wt = emissions_pop, name = "emissions")
 
 world_map <- ne_countries(scale = "medium", returnclass = "sf")
 setdiff(world_map$name, emissions_summary$country)
@@ -56,7 +56,7 @@ p <- ggplot(to_plot) +
     theme_bw() + 
     labs(title = "Total food-based emissions (kg CO2) by country")
 
-pdf("total_emissions_map.pdf", width = 10, height = 6)
+png("total_emissions_map.png", width = 1000, height = 600)
 print(p)
 dev.off()
 
